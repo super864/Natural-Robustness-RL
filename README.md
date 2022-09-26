@@ -6,7 +6,7 @@ Repository for implementing adversarial attack for reinfrocement learning
 
 ## Baseline models of experiment results
 <p align="center">
-    <img src="/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="200">
+    <img src="/images/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="200">
     <img src="/training_and_testing_images/testing/ddpg under Walker2d environment testing without attack.png" width="200">
 </p>
 
@@ -17,7 +17,7 @@ The figures above shows the Baseline models reslus for (a) training DDPG under W
 
 <center>
 <p align="center">
-    <img src="images/Blackbox table.png" width="200">
+    <img src="/images/Blackbox table.png" width="200">
 </p>
 
 The figure above shows the various black-box strategies implemented. The attacks can be mounted on either one of the two channels, with the constraint on the attack following one of the three magnitudes and the specific instantiation following one of the four directions. 
@@ -31,15 +31,15 @@ Next, we implemented the three white-box attack strategies tested on the common 
 ## Results  
 
 <p align="center">
-    <img src="images/tend plots/BlackBox line plot dotted.png" width="200">
+    <img src="/images/tend plots/BlackBox line plot dotted.png" width="200">
 </p>
 
 The figures above shows the results of black box attack. The x-axis represents $\epsilon$ and the y-axis represents the $\% \Delta R$ with respect to $\epsilon$. The solid line represents the average $\% \Delta R$ across all black box attacks and environments, and the dotted line represents the average excluding the Ant environment.
 
 <p align="center">
-    <img src="images/FGSM Attack Line Plot/agent variation along .png" width="200">
-    <img src="images/PGD Attack Line Plot/agent variation along .png" width="200">
-    <img src="images/MAS Attack Line Plot Epsilon/agent variation along Epsilon 0.3" width="200">
+    <img src="/images/FGSM Attack Line Plot/agent variation along .png" width="200">
+    <img src="/images/PGD Attack Line Plot/agent variation along .png" width="200">
+    <img src="/images/MAS Attack Line Plot Epsilon/agent variation along Epsilon 0.3" width="200">
 </p>
 
 The figures above shows the results of white box attack. The plots show the relationship between the value of $\epsilon$ (x-axis) and $\% \Delta R$ (y-axis). Line markers in the plots represent experiments we ran with a specific value of $\epsilon$. The solid line represents the average $\% \Delta R$ across all environments, and the dotted line represents the average excluding the Ant environment.
@@ -50,7 +50,7 @@ The figures above shows the results of white box attack. The plots show the rela
 ## Summary 
 
 <p align="center">
-    <img src="images/Bubble chart/Bubble_chart.png" width="200">
+    <img src="/images/Bubble chart/Bubble_chart.png" width="200">
 </p>
 
 The figure above summarizes the algorithms' correlation between sensitivity and robustness.
