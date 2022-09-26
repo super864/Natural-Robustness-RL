@@ -1,10 +1,8 @@
 import os 
-
-
 import sys
 import subprocess
-
 import time 
+
 start = time.time()
 def Agent_Path(path):
 
@@ -105,21 +103,21 @@ def address(Directory_Path,env_list,env_name):
 def main():
     env_list = ['withoutattackHalfCheetah', 'withoutattackAnt', 'withoutattackHopper', 'withoutattackSwimmer', 'withoutattackWalker']
 
-    env_name =['HalfCheetah', 'Ant', 'Hopper', 'Swimmer', 'Walker2d']
+    env_name = ['HalfCheetah', 'Ant', 'Hopper', 'Swimmer', 'Walker2d']
 
     seed = list(range(6))
 
-    objective=["obs"] #["action", "obs" ,"None"] #
+    objective = ["action", "obs" ,"None"] #
 
-    attack=["range", "fix"] #["fix"] #
+    attack =["range", "fix"] #["fix"] #
 
-    space= ["caction", "aspace"] #["aspace"]
+    space = ["caction", "aspace"] #["aspace"]
 
-    direction= ['same', 'flip', 'random', 'random_individually']   #
+    direction = ['same', 'flip', 'random', 'random_individually']
 
-    percentage= [5,10,15,20,25,50,100,200] #[25,50,100,200] #[5,10,15,20]
+    percentage = [5,10,15,20,25,50,100,200] #[25,50,100,200] #[5,10,15,20]
 
-    zeros  =  ["zero_zero", "zero_postive", "zero_negative"]
+    zeros = ["zero_zero", "zero_postive", "zero_negative"]
         
     directory_path = r"/home/scslab/Desktop/pfrl/ppo/"  
 
@@ -136,47 +134,10 @@ def main():
 
 
     for i in test_run:
+        i = i + " --rollout BlackBox"
         print(i )
 
         subprocess.call( i, shell = True)
-
-
-    #print("test_run", "\n",test_run[:30#[1],"\n", test_run[2],"\n",test_run[3],"\n",test_run[4])
-
-
-    # for i in test_run:
-    #     print(test_run[:10])
-
-
-    # returnStr = ''
-    # for item in test_run:
-    #     returnStr += str(item)+' '
-    # print(returnStr)
-
-
-
-
-    # #!/usr/bin/env python
-    # import sys
-    # saw_errors = 0
-    # for k, v in temp.items():
-    #     if '\0' in k or '\0' in v:
-    #         saw_errors = 1 # setting exit status is nice-to-have but not essential
-    #         continue       # ...but skipping invalid content is important; otherwise,
-    #                        #    we'd corrupt the output stream.
-    #     sys.stdout.write('%s\0%s\0' % (k, v))
-    # sys.exit(saw_errors)
-
-
-
-# for key in temp :
-#     print( key , "->", temp[key] )
-#     print( '\n')
-
-
-
-
-
 
 if __name__ == "__main__":
     main()

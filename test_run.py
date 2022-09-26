@@ -1,15 +1,27 @@
 import os 
-
-
 import sys
 import subprocess
-
 import time 
+import argparse
+
 start = time.time()
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--path",
+    type=str,
+    default=r"/home/scslab/Desktop/pfrl/sac/",
+    help=(
+        "Directory path to save output files."
+        " If it does not exist, it will be created."
+    ),
+)
+args = parser.parse_args()
+
+
+# finding the path for the corresponding policy
 def Agent_Path(path):
-
     a = []
-
     for root, dir, files in os.walk(path):
 
         for name in dir:
@@ -17,49 +29,38 @@ def Agent_Path(path):
             if name == "agent": 
 
                 a.append(os.path.join(root, name))
-
-            # else: 
-            #     Agent_Path(os.path.join(root, name))
-
+            else: 
+                Agent_Path(os.path.join(root, name))
     return a
 
+
+# sorted the path
 def sort_function(a):
     a.sort()
 
-
+# generate the corresponding running command line 
 def test(address,seed,objective,attack,space,direction,percentage,zeros):
-
-    # env=["Walker2d-v2", "Swimmer-v2", "Ant-v2", "HalfCheetah-v2", "Hopper-v2"]
-
-    # out=["Walker" ,"Swimmer", "Ant","HalfCheetah", "Hopper"]
 
     test_run = []
     for key, values in address.items():
-
-        #print('key', key )
-
-        #print('values', values )
         for v in range(len(values)):
-
-
             for j in objective:
-                if j == "None":
-                    
-                    run_command = "python train_ddpg_withoutattack.py --load {0}  --env {1} --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6} --percentage {7}".format(values[v],key+"-v2",v,j,'_','_','_',0)
-
+                if j == "None":  
+                    run_command = "python train_" + args.path.split("/")[-2] +".py --load {0}  --env {1}" \
+                        " --gpu -1 --seed {2} --objective {3} --attack {4} --space {5}" \
+                            " --direction {6} --percentage {7}".format(values[v],key+"-v2",v,j,'_','_','_',0)
                     test_run.append(run_command)
                     continue
 
                 for u in attack:
                     if u == "range":
                         for ii in percentage:
-
-                            run_command = "python train_ddpg_withoutattack.py --load {0}  --env {1} --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6} --percentage {7}".format(values[v],key+"-v2",v,j,u,'_','_',ii)
-
+                            run_command = "python train_" + args.path.split("/")[-2] +".py --load {0}  --env {1}" \
+                                " --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6}" \
+                                    " --percentage {7}".format(values[v],key+"-v2",v,j,u,'_','_',ii)
+                                    
                             test_run.append(run_command)
                         continue
-
-
 
                     for k in space:
 
@@ -68,18 +69,21 @@ def test(address,seed,objective,attack,space,direction,percentage,zeros):
                             for d in percentage:
                                 if k =="aspace" and j == 'obs' and key == "Ant" and l in ['same','flip']:
                                     for ze in zeros:
-                                        run_command = "python train_ddpg_withoutattack.py --load {0}  --env {1} --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6} --percentage {7} --zeros {8}".format(values[v],key+"-v2",v,j,u,k,l,d,ze)
+                                        run_command = "python train_" + args.path.split("/")[-2] +".py--load {0}  --env {1}" \
+                                            " --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6}"\
+                                                " --percentage {7} --zeros {8}".format(values[v],key+"-v2",v,j,u,k,l,d,ze)
                                     
                                         test_run.append(run_command)
                                     continue
 
-                                run_command = "python train_ddpg_withoutattack.py --load {0}  --env {1} --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6} --percentage {7}".format(values[v],key+"-v2",v,j,u,k,l,d)
+                                run_command = "python train_" + args.path.split("/")[-2] +".py --load {0}\  --env {1} --gpu -1 --seed {2} --objective {3} --attack {4} --space {5} --direction {6} --percentage {7}".format(values[v],key+"-v2",v,j,u,k,l,d)
 
                                 test_run.append(run_command)
 
 
     return test_run
 
+# generating dictionary with key environment and value of the directory
 def address(Directory_Path,env_list,env_name):
 
     temp= {}
@@ -105,33 +109,39 @@ def address(Directory_Path,env_list,env_name):
 def main():
     env_list = ['withoutattackHalfCheetah', 'withoutattackAnt', 'withoutattackHopper', 'withoutattackSwimmer', 'withoutattackWalker'] #['withoutattackAnt']
 
-    env_name = ['HalfCheetah', 'Ant', 'Hopper', 'Swimmer', 'Walker2d'] 
+    env_name = ['HalfCheetah', 'Ant', 'Hopper', 'Swimmer', 'Walker2d'] #['Ant'] #
 
     seed = list(range(6))
 
-    objective = ["action", "obs","None"] # ["action", "obs" ,"None"] #
+    objective = ["action", "obs" ,"None"]
 
-    attack = ["range", "fix"] # ["fix"] #
+    attack = ["range", "fix"] 
 
-    space = ["caction", "aspace"] #["aspace"]
+    space = ["caction", "aspace"]
 
     direction =  ['same', 'flip', 'random', 'random_individually']   
 
-    percentage = [5,10,15,20,25,50,100,200] #[25,50,100,200] #[5,10,15,20]
-    
-    zeros= ["zero_zero", "zero_postive", "zero_negative"]
-        
-    directory_path = r"/home/scslab/Desktop/pfrl/ddpg/" 
+    percentage = [5,10,15,20,25,50,100,200]
 
+    zeros= ["zero_zero", "zero_postive", "zero_negative"]
+
+    
+    directory_path = args.path
+    
     all_agent_address = address(directory_path,env_list,env_name) 
 
     test_run = test(all_agent_address,seed,objective,attack,space,direction,percentage,zeros)
 
 
+# start running in terminal 
     for i in test_run:
         i = i + " --rollout BlackBox"
-        print(i)
+        
+        print(i )
+        
         subprocess.call( i, shell = True)
+
+
 
 if __name__ == "__main__":
     main()
