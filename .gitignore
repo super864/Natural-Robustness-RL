@@ -1,5 +1,5 @@
 #data and image 
-*.png
+
 *.csv
 *.txt
 *.parquet
