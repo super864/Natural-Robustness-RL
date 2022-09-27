@@ -23,7 +23,7 @@ The figures above shows the Baseline models reslus for (a) training DDPG under W
 The figure above shows the various black-box strategies implemented. The attacks can be mounted on either one of the two channels, with the constraint on the attack following one of the three magnitudes and the specific instantiation following one of the four directions. 
 
 
-We implemented the three white-box attack strategies tested on the common benchmark RL algorithms. Specifically, the white-box attacks we implemented are the Fast Gradient Sign Method (FGSM), Projected Gradient Descent (PGD) algorithm and the Myopic Action Space (MAS) attack algorithm.
+We implemented the three white-box attack strategies tested on the common benchmark RL algorithms. The white-box attacks we implemented are the Fast Gradient Sign Method (FGSM), Projected Gradient Descent (PGD) algorithm and the Myopic Action Space (MAS) attack algorithm.
 
 
 ## Results  
