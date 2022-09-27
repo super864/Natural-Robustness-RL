@@ -32,7 +32,7 @@ We implemented the three white-box attack strategies tested on the common benchm
     <img src="/images/tend plots/BlackBox line plot dotted.png" width="800">
 </p>
 
-The figures above shows the results of black box attack. The x-axis represents $\epsilon$ and the y-axis represents the $\% \Delta R$ with respect to $\epsilon$. The solid line represents the average $\% \Delta R$ across all black box attacks and environments, and the dotted line represents the average excluding the Ant environment.
+The figures above shows the results of black box attack. The x-axis represents $\epsilon$ and the y-axis represents the $\% \Delta R$ with respect to $\epsilon$. The solid line represents the average $\% \Delta R$ across all black box attacks and environments, and the dotted line represents the average excluding the Ant environment. The figure in left shows the action channel attack, and the figure in the right shows the observation channel attack.
 
 <p align="center">
     <img src="/images/FGSM Attack Line Plot/agent variation along .png" width="600">
@@ -40,7 +40,7 @@ The figures above shows the results of black box attack. The x-axis represents $
     <img src="/images/MAS Attack Line Plot Epsilon/agent variation along Epsilon 0.3.png" width="600">
 </p>
 
-The figures above shows the results of white box attack. The plots show the relationship between the value of $\epsilon$ (x-axis) and $\% \Delta R$ (y-axis). Line markers in the plots represent experiments we ran with a specific value of $\epsilon$. The solid line represents the average $\% \Delta R$ across all environments, and the dotted line represents the average excluding the Ant environment.
+The figures above shows the results of white box attack. The plots show the relationship between the value of $\epsilon$ (x-axis) and $\% \Delta R$ (y-axis). Line markers in the plots represent experiments we ran with a specific value of $\epsilon$. The solid line represents the average $\% \Delta R$ across all environments, and the dotted line represents the average excluding the Ant environment, and FGSM, PGD, and MAS attacks are shown from top to bottom.
 </center>
 
 
@@ -48,7 +48,7 @@ The figures above shows the results of white box attack. The plots show the rela
 ## Summary 
 
 <p align="center">
-    <img src="/images/Bubble chart/Bubble_chart.png" width="800">
+    <img src="/images/Bubble chart/Bubble_chart.png" width="650">
 </p>
 
 The figure above summarizes the algorithms' correlation between sensitivity and robustness.
