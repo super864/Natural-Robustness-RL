@@ -44,20 +44,11 @@ class FGSM(nn.Module):
         target_q = rewards + gamma * (1.0 - done)*next_q 
 
         target_q = torch.tensor([target_q],requires_grad=True)
-
         
         loss = F.mse_loss(target_q, predict_q)
-
         loss.backward()
-
-
-        obs_grad = obs.grad
-        
-
-        
-        perturbed_data = self.fgsm_attack(self.obs, obs_grad)
-        
-    
+        obs_grad = obs.grad       
+        perturbed_data = self.fgsm_attack(self.obs, obs_grad)  
         
         return perturbed_data
 
@@ -68,14 +59,9 @@ class FGSM(nn.Module):
         onpolicy_actions = self.model.policy(obs).rsample()
         q = self.model.q_function((obs, onpolicy_actions))
         loss = -q.mean()
-
-
         loss.backward()
-
         obs_grad = obs.grad
-
         perturbed_data = self.fgsm_attack(self.obs, obs_grad)
-
         return perturbed_data
 
 

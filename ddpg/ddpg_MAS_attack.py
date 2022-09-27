@@ -42,11 +42,10 @@ def l1_spatial_project2(y_orig, budget):
             y_orig[i] = np.sign(y_orig[i]) * xn[i]
     return y_orig
 
+
+# 
 def l2_spatial_project(x, distance):
     norm = l2_spatial_norm(x)
-    # print('x',x)
-    # print('l2 norm', diff)
-    # print('dist',distance)
     if norm <= distance:
         delta = x
     else:
@@ -180,16 +179,8 @@ class DDPG_Adversary(DDPG):
     def act_forward(self, batch_obs, adv_action):
 
         action = self._batch_select_greedy_actions(batch_obs)
-
-# =============================================================================
-#         transitions = self.replay_buffer.sample(1)
-#         
-#         onpolicy_actions = self.policy(batch_obs)#.rsample()
-# =============================================================================
         
         q = self.q_function((torch.from_numpy(batch_obs), torch.from_numpy(action)))
-        
-        #print("___________________________")
         
         
         q_adv = self.q_function((torch.from_numpy(batch_obs), adv_action))
