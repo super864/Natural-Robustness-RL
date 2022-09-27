@@ -17,7 +17,7 @@ The figures above shows the Baseline models reslus for (a) training DDPG under W
 
 <center>
 <p align="center">
-    <img src="/images/Stack bar plots/Blackbox table.png" width="400">
+    <img src="/images/Stack bar plots/Blackbox table.png" width="700">
 </p>
 
 The figure above shows the various black-box strategies implemented. The attacks can be mounted on either one of the two channels, with the constraint on the attack following one of the three magnitudes and the specific instantiation following one of the four directions. 
@@ -29,7 +29,7 @@ We implemented the three white-box attack strategies tested on the common benchm
 ## Results  
 
 <p align="center">
-    <img src="/images/tend plots/BlackBox line plot dotted.png" width="700">
+    <img src="/images/tend plots/BlackBox line plot dotted.png" width="400">
 </p>
 
 The figures above shows the results of black box attack. The x-axis represents $\epsilon$ and the y-axis represents the $\% \Delta R$ with respect to $\epsilon$. The solid line represents the average $\% \Delta R$ across all black box attacks and environments, and the dotted line represents the average excluding the Ant environment.
