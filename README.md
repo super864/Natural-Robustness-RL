@@ -90,6 +90,8 @@ Each Algorithm directory has its own whitebox runner file to run
 
 ## Running individual attack 
 
+under ppo directory
+
 Example run for black box attack 
 ~~~
 python train_ppo.py --load /mnt/raid10/Natural-Robustness-RL/ppo/withoutattackHalfCheetah/attack_HalfCheetah_seed_0/20210709T093820.456842/HalfCheetah-v2_0/agent  --env HalfCheetah-v2 --gpu -1 --seed 0 --objective action --attack fix --space caction --direction same --percentage 5 --rollout BlackBox
@@ -113,7 +115,6 @@ Please cite our paper in your publications if it helps your research:
 
 ## Paper Links
 [Paper Title](paper_link)
-
 
 
 
