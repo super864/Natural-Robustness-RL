@@ -6,8 +6,8 @@ Repository for implementing adversarial attack for reinfrocement learning
 
 ## Baseline models of experiment results
 <p align="center">
-    <img src="/images/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="800">
-    <img src="/images//training_and_testing_images/testing/ddpg under Walker2d environment testing without attack.png" width="800">
+    <img src="/images/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="500">
+    <img src="/images//training_and_testing_images/testing/ddpg under Walker2d environment testing without attack.png" width="500">
 </p>
 
 The figures above shows the Baseline models reslus for (a) training DDPG under Walker environment, (b) Testing DDPG under Walker environment. Since all the other environments perform very similarly regarding the rewards, only one environment is shown here.
