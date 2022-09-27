@@ -56,11 +56,11 @@ The figure above summarizes the algorithms' correlation between sensitivity and 
 
 
 ## Install
-Clone repo and install requirements.txt in a Python>=3.6.13 enviornment.
+clone repo and install MuJoCo and PyTorch in a Python>=3.6.13 environment.
 ~~~
 git clone https://github.com/super864/Natural-Robustness-RL.git # clone
 ~~~
-install mujoco and install pytorch 1.10.2
+install MuJoCo and install PyTorch 1.10.2
 refer https://github.com/openai/mujoco-py and https://pytorch.org/
 
 
