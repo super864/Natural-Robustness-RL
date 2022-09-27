@@ -35,9 +35,9 @@ We implemented the three white-box attack strategies tested on the common benchm
 The figures above shows the results of black box attack. The x-axis represents $\epsilon$ and the y-axis represents the $\% \Delta R$ with respect to $\epsilon$. The solid line represents the average $\% \Delta R$ across all black box attacks and environments, and the dotted line represents the average excluding the Ant environment.
 
 <p align="center">
-    <img src="/images/FGSM Attack Line Plot/agent variation along .png" width="800">
-    <img src="/images/PGD Attack Line Plot/agent variation along .png" width="800">
-    <img src="/images/MAS Attack Line Plot Epsilon/agent variation along Epsilon 0.3.png" width="800">
+    <img src="/images/FGSM Attack Line Plot/agent variation along .png" width="600">
+    <img src="/images/PGD Attack Line Plot/agent variation along .png" width="600">
+    <img src="/images/MAS Attack Line Plot Epsilon/agent variation along Epsilon 0.3.png" width="600">
 </p>
 
 The figures above shows the results of white box attack. The plots show the relationship between the value of $\epsilon$ (x-axis) and $\% \Delta R$ (y-axis). Line markers in the plots represent experiments we ran with a specific value of $\epsilon$. The solid line represents the average $\% \Delta R$ across all environments, and the dotted line represents the average excluding the Ant environment.
