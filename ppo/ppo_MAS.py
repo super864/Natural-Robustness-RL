@@ -3,6 +3,7 @@ import itertools
 import random
 
 import numpy as np
+from numpy import linalg as LA
 import torch
 import torch.nn.functional as F
 
@@ -21,7 +22,6 @@ from pfrl.utils.recurrent import (
 from pfrl.agents import a3c
 from pfrl.agents.ppo import *
 
-from numpy import linalg as LA
 
 def l1_spatial_project2(y_orig, budget):
 
@@ -59,9 +59,6 @@ def l2_spatial_project(x, distance):
 
 def l2_spatial_norm(x):
     return LA.norm(x, 2)
-
-
-
 
 class PPO_Adversary(PPO):
     """Proximal Policy Optimization
@@ -194,7 +191,6 @@ class PPO_Adversary(PPO):
         self.train_recurrent_states = None
         self.train_prev_recurrent_states = None
         self.test_recurrent_states = None
-
         self.value_record = collections.deque(maxlen=value_stats_window)
         self.entropy_record = collections.deque(maxlen=entropy_stats_window)
         self.value_loss_record = collections.deque(maxlen=value_loss_stats_window)
@@ -208,13 +204,10 @@ class PPO_Adversary(PPO):
 
         if self.obs_normalizer:
             b_state = self.obs_normalizer(b_state, update=False)
-
         # action_distrib will be recomputed when computing gradients
         with torch.no_grad(), pfrl.utils.evaluating(self.model):
-
             action_distrib, batch_value = self.model(b_state)
             batch_action = action_distrib.sample().cpu().numpy()
-
 
         return action_distrib, batch_value
     
