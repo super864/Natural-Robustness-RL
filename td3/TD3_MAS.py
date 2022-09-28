@@ -41,9 +41,6 @@ def l1_spatial_project2(y_orig, budget):
 
 def l2_spatial_project(x, distance):
     norm = l2_spatial_norm(x)
-    # print('x',x)
-    # print('l2 norm', diff)
-    # print('dist',distance)
     if norm <= distance:
         delta = x
     else:
@@ -186,7 +183,6 @@ class TD3_Adversary(TD3):
         
         
         
-        
     def act_forward(self, batch_obs, adv_action):
 
         action = self.batch_select_onpolicy_action(batch_obs)
@@ -194,10 +190,7 @@ class TD3_Adversary(TD3):
         
         q1 = torch.flatten(self.q_func1((torch.from_numpy(batch_obs), torch.from_numpy(action))))
         q2 = torch.flatten(self.q_func2((torch.from_numpy(batch_obs), torch.from_numpy(action))))
-        q = torch.min(q1, q2)
-    
-        
-    
+        q = torch.min(q1, q2)    
         q1_adv = torch.flatten(self.q_func1((torch.from_numpy(batch_obs), adv_action)))
         q2_adv = torch.flatten(self.q_func2((torch.from_numpy(batch_obs), adv_action)))
         q_adv = torch.min(q1_adv, q2_adv)

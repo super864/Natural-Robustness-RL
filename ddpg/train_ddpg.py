@@ -258,7 +258,7 @@ def main():
         Obs_act_Dataframe  =  pd.DataFrame()
 
         with agent.eval_mode():
-            for p in range(100):
+            for p in range(1):
                 obs = env.reset()
                 obs = phi(obs)
                 obs_origin = copy.deepcopy(obs)
@@ -567,7 +567,7 @@ def main():
 
             attack = [random.uniform(-1,1) for x in range(np.shape(env.action_space)[0])]
             print( attack)
-            action = agent.act(obs) #+ attack # plus random noise here 
+            action = agent.act(obs)
             # print("action", action)
             # print("action type", np.shape(action))
             # print("action steps", t)
@@ -595,7 +595,6 @@ def main():
             if t % 100000 == 0: #( take last 10 episodes rewards)
             #     rewards.append(episode_r)
                 episodes_number.append(episode_idx)
-            #print("RRRRRR", episode_r)
 
 
         final_rewards ={}
@@ -611,7 +610,7 @@ def main():
         # print('values_episodes.',values_episodes)
         # print('final_rewards.',final_rewards)
 
-        save_dir =  'attack' + args.outdir + '/'
+        save_dir =  'withoutattack' + args.outdir + '/'
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         with open(os.path.join(save_dir, "episodes_number.csv"), "w") as f:
@@ -657,9 +656,10 @@ def main():
                         + str(args.space) + str(args.direction)+ str(args.percentage) + '%' + '/'+ 'Result' + '_test_' + str(args.env)[:-3] + '/'
                         
                     save_result =   str(args.objective)+"_" + str(args.attack)  +"_"+str(args.env)[:-3]+'_' + str(args.seed)+ '.csv'
-        
+            if not os.path.exists(save_folder):
+                os.makedirs(save_folder)
             adr = os. getcwd()+ '/'       
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_datframe_folder,save_dataframe_result ), compression='brotli' )
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
 
                     
         elif args.rollout == 'MAS':
@@ -671,7 +671,7 @@ def main():
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
             adr = os. getcwd()+ '/'
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
         
 
         elif args.rollout == 'FGSM':
@@ -680,7 +680,7 @@ def main():
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
             adr = os. getcwd()+ '/'                
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
 
         elif args.rollout == 'PGD':
             save_folder =  'PGD_Attack' + '/' + 'Epsilon_' + str(args.epsilon)+'_Learning_rate_' +str(args.lr ) + "_Update_steps_" +str(args.attack_steps ) +'/'+ str(args.env)[:-3] +'/'        
@@ -688,7 +688,7 @@ def main():
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
             adr = os. getcwd()+ '/'
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
 
 
 def store_data(df, fn, compression=''):

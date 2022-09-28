@@ -17,7 +17,6 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-
 # finding the path for the corresponding policy
 def Agent_Path(path):
     a = []
@@ -32,14 +31,12 @@ def Agent_Path(path):
                 Agent_Path(os.path.join(root, name))
     return a
 
-
 # sorted the path
 def sort_function(a):
     a.sort()
 
 # generate the corresponding running command line 
 def test(address,seed,objective,attack,space,direction,percentage,zeros):
-
     test_run = []
     for key, values in address.items():
         for v in range(len(values)):
@@ -79,7 +76,6 @@ def test(address,seed,objective,attack,space,direction,percentage,zeros):
 
                                 test_run.append(run_command)
 
-
     return test_run
 
 # generating dictionary with key environment and value of the directory
@@ -101,9 +97,6 @@ def address(Directory_Path,env_list,env_name):
         temp[env_name[i]] = a
 
     return temp
-
-
-
 
 def main():
     env_list = ['withoutattackHalfCheetah', 'withoutattackAnt', 'withoutattackHopper', 'withoutattackSwimmer', 'withoutattackWalker'] 
@@ -135,12 +128,9 @@ def main():
 # start running in terminal 
     for i in test_run:
         i = i + " --rollout BlackBox"
-        
         print(i )
         
         subprocess.call( i, shell = True)
-
-
 
 if __name__ == "__main__":
     main()

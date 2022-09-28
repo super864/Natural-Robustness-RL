@@ -23,7 +23,6 @@ from pfrl.agents.soft_actor_critic import *
 from numpy import linalg as LA
 
 def l1_spatial_project2(y_orig, budget):
-
     y_abs = list(map(abs, y_orig))
     u = sorted(y_abs, reverse=True)
     binK = 1
@@ -47,9 +46,6 @@ def l1_spatial_project2(y_orig, budget):
 
 def l2_spatial_project(x, distance):
     norm = l2_spatial_norm(x)
-    # print('x',x)
-    # print('l2 norm', diff)
-    # print('dist',distance)
     if norm <= distance:
         delta = x
     else:
@@ -58,8 +54,6 @@ def l2_spatial_project(x, distance):
 
 def l2_spatial_norm(x):
     return LA.norm(x, 2)
-
-
 
 
 class SoftActorCritic_Adversary(SoftActorCritic):
@@ -209,13 +203,9 @@ class SoftActorCritic_Adversary(SoftActorCritic):
         self.q_func1_loss_record = collections.deque(maxlen=100)
         self.q_func2_loss_record = collections.deque(maxlen=100)
         self.n_policy_updates = 0
-        
 
     def act_forward(self, batch_obs):
-        
         batch_obs = np.expand_dims(batch_obs.astype(np.float32), axis=0)
         batch_state = torch.from_numpy(batch_obs)
         action_distrib = self.policy(batch_state)
-
-        
         return action_distrib

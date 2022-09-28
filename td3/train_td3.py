@@ -273,20 +273,8 @@ def main():
                     # Uncomment to watch the behavior in a GUI window
                     if args.render:
                         env.render()
-
-                                        #print(attack)
-                    # action = agent.act(obs)
-                    # print("len(action)", len(action))
-                    # print("count(action)", list(action).count(0))
-
-                    # print("len(obs)", len(obs))
-                    # print("count(obs)", list(obs).count(0))
-                    
-                    
+                    # MAS attack 
                     if args.rollout == 'MAS':
-                        #print('Running MAS')
-
-                        
                         if t < args.start_atk:
                             
                             action = spy.act(obs)
@@ -312,87 +300,61 @@ def main():
                                 adv_action = adv_action_new
                                 adv_action_new = adv_action - (lr * grad_a)
                                 counter += 1
-        
                             delta = adv_action_new.detach().numpy() - action
                             if args.s == 'l2':
                                 proj_spatial_delta = l2_spatial_project(delta, budget)
                             elif args.s == 'l1':
-                                proj_spatial_delta = l1_spatial_project2(delta, budget)
-        
+                                proj_spatial_delta = l1_spatial_project2(delta, budget)        
                             proj_action = action + proj_spatial_delta
                             action = np.clip(proj_action, -1, 1)
 
+                    # FGSM Attack 
                     elif args.rollout == 'FGSM':
-
                         FGSM_attack = FGSM(agent, obs, epsilon)
-                        #obs_critic_attack = FGSM_attack.generate(make_env,phi,gamma=0.99)
                         obs_actor_attack = FGSM_attack.fgsm_perturbation()
-
-                        action = agent.act(obs_actor_attack) 
-
-                    elif args.rollout == 'PGD':
-
-                        PGD_attack = PGD(model=agent, obs=obs, num_steps=update_steps, step_size=lr, eps=epsilon, )
-                        #obs_critic_attack = FGSM_attack.generate(make_env,phi,gamma=0.99)
-                        obs_actor_attack = PGD_attack.PGD_perturbation(args.clip)
-
                         action = agent.act(obs_actor_attack)
 
-                    elif args.rollout == 'BlackBox': 
+                    # PGD Attack 
+                    elif args.rollout == 'PGD':
+                        PGD_attack = PGD(model=agent, obs=obs, num_steps=update_steps, step_size=lr, eps=epsilon, )
+                        obs_actor_attack = PGD_attack.PGD_perturbation(args.clip)
+                        action = agent.act(obs_actor_attack)
+
+                    # Black box attack series. Rollout defines the black box attack, and the objective is the targetted channel,  
+                    # fix or range attack, meaning either based on the designed attack or a random attack. 
+                    # The caction presents the current action space, and aspace denotes the entire action space. 
+                    # The direction presents these four directions we implemented. 
+                                             
+                    elif args.rollout == 'BlackBox':
                         if args.objective == 'action':
-                             
-    
-    
+                                
                             if args.attack == "fix":
                                 if args.space == 'caction':
-                                    if args.direction == 'same' :       
-    
+                                    if args.direction == 'same' :           
                                         attack = 1 + args.percentage * 0.01 
-                                        #print('attack', attack)
                                         action = agent.act(obs)
-                                        #print('action', action)
-                                        action = attack * action
-                                        #print('action', action)
-                                        #print('action', np.shape(action))
-                                        #print('obs', obs)
-                                        #print('obs', np.shape(obs))
-    
+                                        action = attack * action    
     
                                     if args.direction == 'flip' :
                                         attack = 1 - args.percentage * 0.01 
-                                        #print('attack', attack)
                                         action = agent.act(obs)
-                                        #print('action', action)
                                         action = attack * action
-                                        #print('action', action)
-    
+
                                     if args.direction == 'random' :
                                         sign = random.choice([-1, 1])
                                         attack = 1 - sign * args.percentage * 0.01 
                                         action = agent.act(obs)
-    
                                         action = attack * action
-    
     
                                     if args.direction == 'random_individually' :
                                         action =  agent.act(obs)
-                                        #print('action', action)
-                                        action = [(1 + args.percentage * 0.01 * random.choice([-1, 1])) * x for x in action]
-                                        #print('action', action)
-                                    
-    
+                                        action = [(1 + args.percentage * 0.01 * random.choice([-1, 1])) * x for x in action]                                   
     
                                 if args.space == 'aspace': 
     
                                     if args.direction == 'same' :  
                                         attack = [args.percentage * 0.02 for x in range(np.shape(env.action_space)[0])]     
-    
-                                        #print('attack', attack)
-    
-                                        action = agent.act(obs)
-    
-                                        #print('action', action)
-    
+                                        action = agent.act(obs)    
                                         action_temp = [] 
     
                                         for i in range(len(action)): 
@@ -406,338 +368,177 @@ def main():
                                                 b = action[i] + attack[i]
                                                 action_temp.append(b)
     
-    
-    
-                                        #print("type", np.shape(action))
-                                        #print("typew", np.shape(action_temp))
-                                        #print("typee", np.shape(attack))
-    
-                                        #print("len(obs)", len(action))
-    
                                         action = np.array(action_temp)
-    
-                                        #print('action', action)
-    
-    
+
     
                                     if args.direction == 'flip' :
                                         attack = [args.percentage * 0.02 for x in range(np.shape(env.action_space)[0])]
-    
-                                        #print('attack', attack)
-    
-                                        action = agent.act(obs)
-                                        #print('action', action)
-    
-                                        action_temp = [] 
-    
-                                        for i in range(len(action)): 
-    
+                                        action = agent.act(obs)    
+                                        action_temp = []     
+                                        for i in range(len(action)):     
                                             if action[i] < 0 :
                                                 a = action[i] + attack[i]
-                                                action_temp.append(a)
-    
-                                            elif action[i] > 0 :
-    
+                                                action_temp.append(a)    
+                                            elif action[i] > 0 :    
                                                 b = action[i] - attack[i]
                                                 action_temp.append(b)
     
                                         action = np.array(action_temp)
-    
-                                        #print('action', action)
-    
-    
-    
+
                                     if args.direction == 'random':
                                         sign = random.choice([-1, 1])
                                         attack = [sign * args.percentage * 0.02 for x in range(np.shape(env.action_space)[0])]
-                                        #print('attack', attack)
-    
                                         action = agent.act(obs)
-                                        #print('action', action)
                                         action = attack +  action
-                                        #print('action', action)
-    
-    
+
                                     if args.direction == 'random_individually' :
                                         attack = [args.percentage * 0.02 for x in range(np.shape(env.action_space)[0])]
-                                        #print('attack', attack)
                                         new_attack = [ random.choice([-1, 1]) * x for x in attack]
-    
-                                        #print('new_attack', new_attack)
-                                        action =  agent.act(obs) 
-    
-                                        #print('action', action)
-    
+                                        action =  agent.act(obs)    
                                         action =  action + new_attack
-    
-                                        #print('action', action)
-    
+
                             if args.attack == "range":
                                 range_number = args.percentage * 0.01 
-                                #print('range_number', range_number)
                                 attack = [random.uniform(-range_number,range_number) for x in range(np.shape(env.action_space)[0])]
-                                #print('attack', attack)
                                 action = agent.act(obs)
-                                #print('action', action)
                                 action = action + attack
-                                #print('action', action)
     
-                        if args.objective == 'obs':
-    
-    
-                            if args.attack == "fix":
-    
+                        if args.objective == 'obs':    
+                            if args.attack == "fix":    
                                 if args.space == 'caction':
-                                    if args.direction == 'same' :  
-    
-                                        #print("obs_11", obs )
+                                    if args.direction == 'same' :      
                                         obs = (1+ args.percentage * 0.01 )  * obs 
-                                        #print("obs", obs )
-                                        obs = phi(obs)
-    
-    
+                                        obs = phi(obs)    
+
                                     elif args.direction == 'flip' :
-                                        #print("obs_11", obs )
                                         obs = (1 - args.percentage * 0.01 )  * obs 
                                         obs = phi(obs)
-                                        #print("obs", obs )
-    
+
                                     elif args.direction == 'random' :
                                         sign = random.choice([-1, 1])
-                                        #print("sign", sign )
-                                        #print("obs_11", obs )
                                         obs = (1+ sign * args.percentage * 0.01 ) * obs
                                         obs = phi(obs)
-                                        #print("obs_11", obs )
-    
+
                                     elif args.direction == 'random_individually' :
-    
-    
-                                        #print("obs_11", obs)
-    
                                         obs = np.array([(1 + args.percentage * 0.01 * random.choice([-1, 1]))* x for x in obs])
                                         obs = phi(obs)
-                                        # print("obs", type(obs) )
-                                        #action = agent.act(obs)
     
-                                        #print("obs", obs )
-    
-    
-                                elif args.space == 'aspace': 
-    
+                                elif args.space == 'aspace':     
                                     if args.direction == 'same' : 
-                                        
-                                        #print('obs11', np.shape(obs))
-    
-                                        attack_obs = [args.percentage * 0.02 for x in range(np.shape(env.observation_space)[0])] 
-    
+                                        attack_obs = [args.percentage * 0.02 for x in range(np.shape(env.observation_space)[0])]     
                                         obs_temp = []
     
-    
                                         for i in range(len(obs)): 
-    
-    
                                             if obs[i] < 0 :
                                                 a = obs[i] - attack_obs[i]
                                                 obs_temp.append(a)
     
                                             elif obs[i] > 0 :
-    
                                                 b = obs[i] + attack_obs[i]
                                                 obs_temp.append(b)
     
                                             elif obs[i] == 0 :
-                                                #print("obs[i]--",obs[i])
-                                                #print("attack_obs[i]--",attack_obs[i])
-    
                                                 if args.zeros == 'zero_zero':
                                                     b = obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_zero'
     
-                                                elif args.zeros == 'zero_negative':
-    
+                                                elif args.zeros == 'zero_negative':    
                                                     b = obs[i] - attack_obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_negative'
-    
-    
-                                                elif args.zeros == 'zero_postive':
-    
+        
+                                                elif args.zeros == 'zero_postive':    
                                                     b = obs[i] + attack_obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_postive'
     
     
-                                        print('zeros', list(obs).count(0))
-                                        print('obs', np.shape(obs))
-                                        obs = np.array(obs_temp)
-    
+                                        #print('zeros', list(obs).count(0))
+                                        #print('obs', np.shape(obs))
+                                        obs = np.array(obs_temp)    
                                         obs = phi(obs)
-    
-    
-    
-                                                              
-    
-                                    elif args.direction == 'flip' :
-    
-                                        
-                                        
+                                    
+                                    elif args.direction == 'flip' : 
                                         attack_obs = [args.percentage * 0.02 for x in range(np.shape(env.observation_space)[0])] 
-    
                                         obs_temp = []
-    
-                                        #print("len(obs)", len(obs))
-                                        #print("count(obs)", list(obs).count(0))
-    
+
                                         for i in range(len(obs)): 
-    
                                             if obs[i] < 0 :
-                                                #print("obs[i]",obs[i])
-                                                #print("attack_obs[i]",attack_obs[i])
                                                 a = obs[i] + attack_obs[i]
-    
-                                                #print("a",a)
                                                 obs_temp.append(a)
     
                                             elif obs[i] > 0 :
-                                                #print("obs[i]--",obs[i])
-                                                #print("attack_obs[i]--",attack_obs[i])
-    
                                                 b = obs[i] - attack_obs[i]
-                                                #print("b",b)
                                                 obs_temp.append(b)
-    
-    
+        
                                             elif obs[i] == 0 :
-                                                #print("obs[i]--",obs[i])
-                                                #print("attack_obs[i]--",attack_obs[i])
-    
-                                                b = obs[i]
-    
+                                                b = obs[i]    
                                                 if args.zeros == 'zero_zero':
                                                     b = obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_zero'
     
                                                 elif args.zeros == 'zero_negative':
-                                                    #print('-----')
-    
                                                     b = obs[i] + attack_obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_negative'
     
-    
-                                                elif args.zeros == 'zero_postive':
-    
+                                                elif args.zeros == 'zero_postive':    
                                                     b = obs[i] - attack_obs[i]
-                                                    #print("b",b)
                                                     obs_temp.append(b)
                                                     name = 'zero_postive'
-    
-    
-                                        # print("type", np.shape(obs))
-                                        # print("typew", np.shape(obs_temp))
-                                        # print("typee", np.shape(attack_obs))
-    
+
                                         # print("len(obs)", len(obs))
                                         obs = np.array(obs_temp)
                                         obs = phi(obs)
-                                        print("len(obs)", len(obs))
-                                        print("count(obs)", list(obs).count(0))
-                                        #obs = obs_temp
-    
-                                        #print('obs', obs)
-    
+                                        #print("len(obs)", len(obs))
+                                        #print("count(obs)", list(obs).count(0))
+
                                     elif args.direction == 'random' :
                                         sign = random.choice([-1, 1])
-    
-                                        #print('obs11', obs)
-                                        #print('sign', sign)
                                         attack_obs = [sign * args.percentage * 0.02 for x in range(np.shape(env.observation_space)[0])]  
-                                        #print('attack_obs', attack_obs)
-                                        obs = obs + attack_obs   
-    
+                                        obs = obs + attack_obs       
                                         obs = phi(obs)
-                                        # print('obs', obs)
-    
-    
-                                        
-    
+
                                     elif args.direction == 'random_individually' :
                                         #print('obs11', obs)
                                         attack_obs = [ args.percentage * 0.02 for x in range(np.shape(env.observation_space)[0])]
-    
-                                        #print('attack_obs', attack_obs)
                                         new_attack_obs = [ random.choice([-1, 1]) * x for x in attack_obs]
-    
-                                        #print('new_attack_obs', new_attack_obs)
-    
-    
                                         obs = obs + new_attack_obs  
                                         obs= phi(obs)
     
-                                        #print('obs', obs)
-    
                             if args.attack == "range":
-    
-                                #print('obs11', obs)
                                 range_number = args.percentage * 0.01 
-                                #print('range_number', range_number)
                                 attack_obs = [random.uniform(-range_number,range_number) for x in range(np.shape(env.observation_space)[0])]
-                                #print('attack_obs', attack_obs)
-    
                                 obs = obs + attack_obs
-    
-                                #print('obs', obs)
                                 obs = phi(obs)
-    
-    
-                            
-                            action = agent.act(obs)
 
-                        zero_number_obs = (len(action),list(action).count(-1))
+                            action = agent.act(obs)
+                            zero_number_obs = (len(action),list(action).count(-1))
+
                     if args.objective == 'None':
                         action = agent.act(obs)
-
-                    #print("len(obs)", len(obs))
-                    #print("count(obs)", list(obs).count(0))
                     obs_value.append(obs)
                     action_value.append(action)
                     step_number.append(t)
-
-
                     obs, r, done, _ = env.step(action)
                     obs = phi(obs)
                     R += r
                     rewards_value.append(r)
                     t += 1
-
-                    reset = t == max_episode_len
-                    
+                    reset = t == max_episode_len                    
                     #print("done", done)
                     #print("reset", reset)
                     agent.observe(obs, r, done, reset)
 
                     if done or reset:
-                        #print("______________________________")
                         episode_name = np.repeat(p, len(step_number))
-                        data_frame_temp = pd.DataFrame({"action" : action_value,"obs":obs_value, "rewards": rewards_value,"steps": step_number, "episode":episode_name } )  
-                        
+                        data_frame_temp = pd.DataFrame({"action" : action_value,"obs":obs_value, "rewards": rewards_value,"steps": step_number, "episode":episode_name } )                         
                         Obs_act_Dataframe = Obs_act_Dataframe.append(data_frame_temp)
-                        
                         break
-                    
 
-
-
-                final_rewards[str(p)] = R
-                
+                final_rewards[str(p)] = R               
                 print('evaluation episode:', p, 'R:', R)
 
 
@@ -750,76 +551,48 @@ def main():
         n_updates = 0
         t = 0
 
-
-        
         env = make_env(test=False)
 
         obs = env.reset()
-        
+        phi = lambda x: x.astype(np.float32, copy=False)
         obs = phi(obs)
-
-
-
-
         values_episodes = {}
-        # rewards = []
-        # episodes = []
-
         episodes_number = []
+
         while t <= args.steps:
-            if args.render:
-                env.render()
+            #if args.render:
+                #env.render()
 
-
-
-            # random an attack from(-1,1 )
-
-            #attack = [random.uniform(-1,1) for x in range(np.shape(env.action_space)[0])]
-            #print( attack)
-
-            action = agent.act(obs) #+ attack # plus random noise here 
-            #print("action", action)
-
-
-            #print("env.observation_space.high",env.observation_space.high)
-
-            #print("env.observation_space.low",env.observation_space.low)
-
-            #print("env.action_space.high",env.action_space.high ) 
-            #print("env.action_space.low",env.action_space.low)
-            #print("action type", np.shape(action))
-            #print("action steps", t)
+            attack = [random.uniform(-1,1) for x in range(np.shape(env.action_space)[0])]
+            print( attack)
+            action = agent.act(obs)
+            # print("action", action)
+            # print("action type", np.shape(action))
+            # print("action steps", t)
             obs, r, done, info = env.step(action)
             obs = phi(obs)
             t += 1
-
- 
             episode_r += r
-
             episode_len += 1
             reset = episode_len  == max_episode_len
             agent.observe(obs, r, done, reset)
 
-
-
             if done or reset:
                 #print('------------episode:', episode_idx, 'R:', episode_r)
-
-
+                # rewards.append(episode_r)            
+                # episodes.append(episode_idx)
 
                 values_episodes[str(episode_idx)] = episode_r
-
                 episode_r = 0
                 episode_idx += 1
-
+                #save_file(args.outdir,agent,env,episode_r,episode_idx)
                 episode_len = 0
                 obs = env.reset()
                 obs = phi(obs)
 
             if t % 100000 == 0: #( take last 10 episodes rewards)
-
+            #     rewards.append(episode_r)
                 episodes_number.append(episode_idx)
-
 
 
         final_rewards ={}
@@ -829,27 +602,13 @@ def main():
                 temp.append(values_episodes[str(episodes_number[i]-y)])
 
             final_rewards[str(episodes_number[i])] = temp
-
-
             episodes_number[i]
+       
+        # print('episodes_number.',episodes_number)
+        # print('values_episodes.',values_episodes)
+        # print('final_rewards.',final_rewards)
 
-
-
-
-
-
-        #print('rewards.',rewards)
-
-       # print('episode_idx.',episode_idx)
-        
-        #print('episodes_number.',episodes_number)
-        #print('values_episodes.',values_episodes)
-
-        #print('final_rewards.',final_rewards)
-
-
-
-        save_dir =  'Withoutattack' +'_'+ args.outdir + '/'
+        save_dir =  'withoutattack' + args.outdir + '/'
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         with open(os.path.join(save_dir, "episodes_number.csv"), "w") as f:
@@ -857,12 +616,10 @@ def main():
             f.writerow(["episodes_number"])
             f.writerow([episodes_number])
 
-
         with open(os.path.join(save_dir, "values_episodes.csv"), "w") as f:
             f = csv.DictWriter(f, values_episodes.keys())
             f.writeheader()
             f.writerow(values_episodes)
-
 
         with open(os.path.join(save_dir, "final_rewards.csv"), "w") as f:
             f = csv.DictWriter(f, final_rewards.keys())
@@ -874,131 +631,71 @@ def main():
 
 
 
-
-
     if args.load:
 
-
         if args.rollout == 'BlackBox':
-        
             if 'name' in locals(): 
-        
-
                 #exit()
                 save_folder =  'Testing_Result' + '/' + str(args.objective) + '_' +str(args.attack) + '_attack_' \
                     + str(args.space) + str(args.direction)+ str(args.percentage) + '%' + '/'+ "Zero_Pixels"+ '/'+ 'Result' + '_test_' + str(args.env)[:-3] +"_" +str(name)+ '/'
-                    
-                    
                 save_result =  'Testing_Attack'+'_'+ str(args.objective)+"_" + str(args.attack)  +"_"+str(args.env)+'_'+ str(args.seed)+ '.csv'
-        
-                
+
                 if args.objective == "obs" or args.objective == 'None':
                     save_datframe_folder =  'Obs_act_relation' + '/' + str(args.objective) + '_' +str(args.attack) + '_attack_' \
                         + str(args.space) + str(args.direction)+ str(args.percentage) + '%' + '/'+"Zero_Pixels"+ '/' 'Result' + '_test_' + str(args.env)[:-3] +'_ '+ str(name) +  '/'
-                        
                     save_dataframe_result =   str(args.objective)+"_" + str(args.attack)  +"_"+str(args.env)[:-3]+'_'+str(name)+'_'+ str(args.seed)+ '.csv'
-        
-        
-        
-        
-        
+                
             else:
-
                 # exit()
                 save_folder =  'Testing_Result' + '/' + str(args.objective) + '_' +str(args.attack) + '_attack_' \
                     + str(args.space) + str(args.direction)+ str(args.percentage) + '%' + '/'+ 'Result' + '_test_' + str(args.env)[:-3] +'/'
-                    
-                    
                 save_result =  'Testing_Attack'+'_'+ str(args.objective)+"_" + str(args.attack)  +"_"+str(args.env)+'_'+ str(args.seed)+ '.csv'
-        
-                
+
                 if args.objective == "obs" or args.objective == 'None':
                     save_folder =  'Obs_act_relation' + '/' + str(args.objective) + '_' +str(args.attack) + '_attack_' \
                         + str(args.space) + str(args.direction)+ str(args.percentage) + '%' + '/'+ 'Result' + '_test_' + str(args.env)[:-3] + '/'
                         
                     save_result =   str(args.objective)+"_" + str(args.attack)  +"_"+str(args.env)[:-3]+'_' + str(args.seed)+ '.csv'
-        
-        
-        
-            adr = os. getcwd()+ '/'
-                
-                
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_datframe_folder,save_dataframe_result ), compression='brotli' )
-
-            
-                
-                    
-        elif args.rollout == 'MAS':
-            
-            save_folder =  'MAS_Attack' + '/' + "Starting_Point_" + str(args.start_atk) + '_' + "Clip_"+str(args.clip ) + '_Learning_rate_' +str(args.lr ) +\
-                '_epsilon_' + str(args.epsilon)+ '_budget_' + str(args.budget)+ '_norm_' + str(args.s)+'/'+ str(args.env)[:-3] +'/'
-                
-                
-            save_result =  'Seed' + str(args.seed)+ '.parquet'
-            
-            
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
+            adr = os. getcwd()+ '/'       
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
         
-            adr = os. getcwd()+ '/'
-                
-                
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
+        elif args.rollout == 'MAS':
 
+            save_folder =  'MAS_Attack' + '/' + "Starting_Point_" + str(args.start_atk) + '_' + "Clip_"+str(args.clip ) + '_Learning_rate_' +str(args.lr ) +\
+                '_epsilon_' + str(args.epsilon)+ '_budget_' + str(args.budget)+ '_norm_' + str(args.s)+'/'+ str(args.env)[:-3] +'/'              
+            save_result =  'Seed' + str(args.seed)+ '.parquet'
+
+            if not os.path.exists(save_folder):
+                os.makedirs(save_folder)
+            adr = os. getcwd()+ '/'
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli' )
+        
 
         elif args.rollout == 'FGSM':
-
-
-
-            save_folder =  'FGSM_Attack' + '/' + 'Epsilon_' + str(args.epsilon) +'/'+ str(args.env)[:-3] +'/'
-                
-                
-            save_result =  'Seed' + str(args.seed)+ '.parquet'
-            
-            
+            save_folder =  'FGSM_Attack' + '/' + 'Epsilon_' + str(args.epsilon) +'/'+ str(args.env)[:-3] +'/'                
+            save_result =  'Seed' + str(args.seed)+ '.parquet'            
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
-        
-            adr = os. getcwd()+ '/'
-                
-                
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
-
+            adr = os. getcwd()+ '/'                
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
 
         elif args.rollout == 'PGD':
-
-
-
-            save_folder =  'PGD_Attack' + '/' + 'Epsilon_' + str(args.epsilon)+'_Learning_rate_' +str(args.lr ) + "_Update_steps_" +str(args.attack_steps ) +'/'+ str(args.env)[:-3] +'/'
-                
-                
-            save_result =  'Seed' + str(args.seed)+ '.parquet'
-            
-            
+            save_folder =  'PGD_Attack' + '/' + 'Epsilon_' + str(args.epsilon)+'_Learning_rate_' +str(args.lr ) + "_Update_steps_" +str(args.attack_steps ) +'/'+ str(args.env)[:-3] +'/'        
+            save_result =  'Seed' + str(args.seed)+ '.parquet'            
             if not os.path.exists(save_folder):
                 os.makedirs(save_folder)
-        
             adr = os. getcwd()+ '/'
-                
-                
-            store_data( df =Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
+            store_data( df = Obs_act_Dataframe, fn=adr + os.path.join(save_folder,save_result ), compression='brotli')
+
 
 
 
 def store_data(df, fn, compression=''):
-
-
     print('writing...', end='', flush=True)
-    
     compression = 'brotli' if compression == '' else compression
-    
-    
     df.to_parquet(fn, engine='pyarrow', compression=compression)
-    
-    
-    
-    #cp.write_file(adr,df=df, fn=fn, compression=compression)
-
 
 def compute_grad(q, adv_q, action, adv_action):
     if type(action) == torch.Tensor:
@@ -1015,8 +712,6 @@ def compute_grad(q, adv_q, action, adv_action):
     return grad
 
     
-
-
 if __name__ == "__main__":
     main()
     end = time.time()

@@ -247,7 +247,7 @@ class TRPO_Adversary(TRPO):
 
         # action_distrib will be recomputed when computing gradients
         with torch.no_grad(), pfrl.utils.evaluating(self.model):
-
+            
             action_distrib, batch_value = self.model(b_state)
             batch_action = action_distrib.sample().cpu().numpy()
 
