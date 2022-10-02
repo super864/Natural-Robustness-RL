@@ -2,12 +2,7 @@
 Repository for implementing adversarial attack for reinfrocement learning 
 
 ## Baseline models of experiment results
-<p align="center">
-    <img src="/images/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="450">
-    <img src="/images//training_and_testing_images/testing/ddpg under Walker2d environment testing without attack.png" width="450">
-</p>
-
-The figures above shows the Baseline models reslus for (a) training DDPG under Walker environment, (b) Testing DDPG under Walker environment. Since all the other environments perform very similarly regarding the rewards, only one environment is shown here.
+Deep reinforcement learning (DRL) has been shown to have numerous potential applications in the real world. However, DRL algorithms are still extremely sensitive to noise and adversarial perturbations, hence inhibiting the deployment of RL in many real-life applications. Analyzing the robustness of DRL algorithms to adversarial attacks is an important prerequisite to enabling the widespread adoption of DRL algorithms. Common perturbations on DRL frameworks during test time include perturbations to the observation and the action channel. Compared with observation channel attacks, action channel attacks are less studied; hence, few comparisons exist that compare the effectiveness of these attacks in DRL literature. In this work, we examined the effectiveness of these two paradigms of attacks on common DRL algorithms and studied the natural robustness of DRL algorithms towards various adversarial attacks in hopes of gaining insights into the individual response of each type of algorithm under different attack conditions. 
 
 
 ## Experiments Table 
