@@ -1,9 +1,6 @@
 # RL Natural Robustness
 Repository for implementing adversarial attack for reinfrocement learning 
 
-<em>**Paper accepted in ???? (???? 2022)**</em>
-
-
 ## Baseline models of experiment results
 <p align="center">
     <img src="/images/training_and_testing_images/training/ddpg under Walker2d environment training without attack.png" width="450">
@@ -101,23 +98,3 @@ Example run for white box attack
 ~~~
 python train_ppo.py --load /mnt/raid10/Natural-Robustness-RL/ppo/withoutattackHalfCheetah/attack_HalfCheetah_seed_0/20210709T093820.456842/HalfCheetah-v2_0/agent  --env HalfCheetah-v2 --gpu -1 --seed 0 --rollout PGD --epsilon 0.1 --clip True --lr 3 --attack_steps 25
 ~~~
-
-
-## Citation
-Please cite our paper in your publications if it helps your research:
-
-	@article{article,
-	  title={title},
-	  author={author},
-	  journal={journal},
-	  year={2022}
-	}
-
-## Paper Links
-[Paper Title](paper_link)
-
-
-
-## Contributors
-- [Qisai Liu](https://github.com/super864/Natural-Robustness-RL)
-- [Xian Yeow Lee](https://github.com/xylee95)
